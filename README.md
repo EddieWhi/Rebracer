@@ -1,4 +1,6 @@
-<img src="https://ci.appveyor.com/api/projects/status/github/EddieWhi/Rebracer?branch=appveyor&svg=true" />
+<a href="https://ci.appveyor.com/project/EddieWhi/rebracer">
+	<img src="https://ci.appveyor.com/api/projects/status/github/EddieWhi/Rebracer?branch=appveyor&svg=true" />
+</a>
 
 #Rebracer
 
