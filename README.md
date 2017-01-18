@@ -1,3 +1,5 @@
+<img src="https://ci.appveyor.com/api/projects/status/github/EddieWhi/Rebracer?branch=appveyor&svg=true" />
+
 #Rebracer
 
 Rebracer solves an age-old problem with working on C# projects from a variety of source: source formatting settings.
