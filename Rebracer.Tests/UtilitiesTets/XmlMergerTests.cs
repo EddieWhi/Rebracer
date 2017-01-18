@@ -200,7 +200,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 				<c />
 		</b>
 		<d />
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 
 			MergeElements(container,
@@ -216,14 +216,14 @@ namespace Rebracer.Tests.UtilitiesTets {
 			var source = @"<C>
 		<b />
 		<d />
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 			MergeElements(container, new XElement("c"));
 			container.ToString().Should().Be(@"<C>
 		<b />
 		<c />
 		<d />
-</C>", "new element in middle should have correct whitespace");
+</C>".NormalizeLineEndings(), "new element in middle should have correct whitespace");
 
 			MergeElements(container, new XElement("a"));
 			container.ToString().Should().Be(@"<C>
@@ -231,7 +231,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 		<b />
 		<c />
 		<d />
-</C>", "new element at beginning should have correct whitespace");
+</C>".NormalizeLineEndings(), "new element at beginning should have correct whitespace");
 
 			MergeElements(container, new XElement("e"), new XElement("f"));
 			container.ToString().Should().Be(@"<C>
@@ -241,7 +241,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 		<d />
 		<e />
 		<f />
-</C>", "new elements at end should have correct whitespace");
+</C>".NormalizeLineEndings(), "new elements at end should have correct whitespace");
 		}
 
 		[TestMethod]
@@ -250,7 +250,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 			var source = @"<C>
 		<d />
 		<b />
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 			var newSource = MergeElements(container, new XElement("a"), new XElement("c"), new XElement("e"));
 			container.ToString().Should().Be(@"<C>
@@ -259,7 +259,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 		<c />
 		<d />
 		<e />
-</C>");
+</C>".NormalizeLineEndings());
 		}
 
 		[TestMethod]
@@ -273,7 +273,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 				</x2>
 		</a>
 		<d />
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 			var newSource = MergeElements(container,
 				new XElement("a", new XAttribute("b", "c"),
@@ -289,7 +289,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 				</x2>
 		</a>
 		<d />
-</C>");
+</C>".NormalizeLineEndings());
 		}
 
 		[TestMethod]
@@ -301,7 +301,7 @@ namespace Rebracer.Tests.UtilitiesTets {
 		<!-- Comment on B -->
 		<b />
 		<!-- Comment on end -->
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 			var newSource = MergeElements(container, new XElement("a"), new XElement("c"), new XElement("e"), new XElement("f"));
 			container.ToString().Should().Be(@"<C>
@@ -314,15 +314,16 @@ namespace Rebracer.Tests.UtilitiesTets {
 		<e />
 		<f />
 		<!-- Comment on end -->
-</C>");
+</C>".NormalizeLineEndings());
 		}
 		[TestMethod]
-		public void ReplacedElementsPreserveWhitespace() {
+		public void ReplacedElementsPreserveWhitespace()
+		{
 			// Note two tabs before each element
 			var source = @"<C>
 		<a />
 		<c />
-</C>";
+</C>".NormalizeLineEndings();
 			var container = XElement.Parse(source, LoadOptions.PreserveWhitespace);
 			var newSource = MergeElements(container,
 				new XElement("c", "Hi!")
@@ -330,7 +331,46 @@ namespace Rebracer.Tests.UtilitiesTets {
 			container.ToString().Should().Be(@"<C>
 		<a />
 		<c>Hi!</c>
-</C>");
+</C>".NormalizeLineEndings());
+		}
+		[TestMethod]
+		public void AddValueOnMergeCanBeDisabled() {
+			AddValueCanBeDisabledForSpecificElement("b");
+			AddValueCanBeDisabledForSpecificElement("d");
+			AddValueCanBeDisabledForSpecificElement("f");
+		}
+		private void AddValueCanBeDisabledForSpecificElement(string elementToUpdate) {
+			var container = new XElement("C",
+				new XAttribute("RebracerCanAddValues", false),
+				new XElement("b", new XAttribute("Attr", "Original Value b")),
+				new XElement("d", new XAttribute("Attr", "Original Value d")),
+				new XElement("f", new XAttribute("Attr", "Original Value f"))
+			);
+
+			MergeElements(container,
+				new XElement("g"),
+				new XElement("e"),
+				new XElement(elementToUpdate, new XAttribute("Attr", "Updated Value")),
+				new XElement("c"),
+				new XElement("a")
+			).Should().BeTrue();
+
+			Func<string, string> expectedAttrValue = elem =>
+				elem == elementToUpdate ?
+					"Updated Value" :
+					"Original Value " + elem;
+
+			container.Should().BeEquivalentTo(new XElement("C",
+				new XAttribute("RebracerCanAddValues", false),
+				new XElement("b", new XAttribute("Attr", expectedAttrValue("b"))),
+				new XElement("d", new XAttribute("Attr", expectedAttrValue("d"))),
+				new XElement("f", new XAttribute("Attr", expectedAttrValue("f")))
+			), "Compare failed when updating element " + elementToUpdate);
+		}
+	}
+	static class StringExtensions {
+		public static string NormalizeLineEndings(this string input) {
+			return System.Text.RegularExpressions.Regex.Replace(input, @"\r\n?|\n", Environment.NewLine);
 		}
 	}
 	// Stolen from https://github.com/dennisdoomen/fluentassertions/pull/35
