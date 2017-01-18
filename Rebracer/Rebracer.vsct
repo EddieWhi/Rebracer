@@ -65,7 +65,7 @@
         <Parent guid="guidRebracerCmdSet" id="MyMenuGroup" />
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <ButtonText>New &amp;Rebracer Settings File</ButtonText>
+          <ButtonText>New &amp;Rebracer Settings File (EW)</ButtonText>
           <ToolTipText>Creates a Rebracer settings file storing editor settings for this solution, initialized from your current Visual Studio options.</ToolTipText>
         </Strings>
       </Button>
@@ -76,10 +76,10 @@
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidRebracerPkg" value="{bfc869c4-ae0f-467a-86a4-5d9401303490}" />
+    <GuidSymbol name="guidRebracerPkg" value="{57dbed6a-3ad0-4d95-a41c-796f55ee1333}" />
     
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidRebracerCmdSet" value="{f4eae6a4-8dde-4fce-971c-9f621b2fefb4}">
+    <GuidSymbol name="guidRebracerCmdSet" value="{fdc314b9-606b-438e-afd9-1f19b7318529}">
 
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdCreateSolutionSettingsFile" value="0x0100" />

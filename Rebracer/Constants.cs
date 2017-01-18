@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SLaks.Rebracer {
 	static class GuidList {
-		public const string guidRebracerPkgString = "bfc869c4-ae0f-467a-86a4-5d9401303490";
-		public const string guidRebracerCmdSetString = "f4eae6a4-8dde-4fce-971c-9f621b2fefb4";
+		public const string guidRebracerPkgString = "57dbed6a-3ad0-4d95-a41c-796f55ee1333";
+		public const string guidRebracerCmdSetString = "fdc314b9-606b-438e-afd9-1f19b7318529";
 
 		public static readonly Guid guidRebracerCmdSet = new Guid(guidRebracerCmdSetString);
 	}
