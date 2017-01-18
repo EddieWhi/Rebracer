@@ -26,6 +26,8 @@ namespace SLaks.Rebracer.Utilities {
 			// May not be sorted
 			var oldItems = container.Elements().ToList();
 
+			var canAddValues = (bool?)container.Attribute("RebracerCanAddValues") ?? true;
+
 			int newIndex = 0;
 			bool changed = false;
 
@@ -35,16 +37,18 @@ namespace SLaks.Rebracer.Utilities {
 
 				// Insert any new items that should come before this element
 				while (newIndex < newItems.Count && StringComparer.Ordinal.Compare(newItems[newIndex].Key, thisKey) < 0) {
-					changed = true;
-					XElement newNode = newItems[newIndex].Value;
+					if (canAddValues) {
+						changed = true;
+						XElement newNode = newItems[newIndex].Value;
 
-					// Insert the new element before any comments or
-					// whitespace that precede this element, and add
-					// the requisite separator whitespace before it.
-					var precedingTrivia = o.GetPrecedingTrivia().FirstOrDefault();
+						// Insert the new element before any comments or
+						// whitespace that precede this element, and add
+						// the requisite separator whitespace before it.
+						var precedingTrivia = o.GetPrecedingTrivia().FirstOrDefault();
 
-					(precedingTrivia ?? o).AddBeforeSelf(newNode);
-					newNode.AddBeforeSelf(newNode.GetPrecedingWhitespace());
+						(precedingTrivia ?? o).AddBeforeSelf(newNode);
+						newNode.AddBeforeSelf(newNode.GetPrecedingWhitespace());
+					}
 					newIndex++;
 				}
 
@@ -77,17 +81,20 @@ namespace SLaks.Rebracer.Utilities {
 			if (newIndex < newItems.Count)
 				changed = true;
 
-			// Add any new items that go after the last item.
-			// Add these nodes immediately following the last
-			// element, before trailing whitespace & comments
-			var lastElement = container.Elements().LastOrDefault();
-			// Use AddBeforeSelf() to preserve ordering.
-			var inserter = lastElement != null && lastElement.NextNode != null
-				? lastElement.NextNode.AddBeforeSelf : new NodeInserter(container.Add);
+			if (canAddValues) {
+				// Add any new items that go after the last item.
+				// Add these nodes immediately following the last
+				// element, before trailing whitespace & comments
+				var lastElement = container.Elements().LastOrDefault();
+				// Use AddBeforeSelf() to preserve ordering.
+				var inserter = lastElement != null && lastElement.NextNode != null
+					? lastElement.NextNode.AddBeforeSelf : new NodeInserter(container.Add);
 
-			var separatingWhitespace = lastElement.GetPrecedingWhitespace();
-			for (; newIndex < newItems.Count; newIndex++)
-				inserter(separatingWhitespace, newItems[newIndex].Value);
+				var separatingWhitespace = lastElement.GetPrecedingWhitespace();
+				for (; newIndex < newItems.Count; newIndex++)
+					inserter(separatingWhitespace, newItems[newIndex].Value);
+			}
+
 			return changed;
 		}
 
@@ -177,7 +184,7 @@ namespace SLaks.Rebracer.Utilities {
 			}
 		}
 
-		public static int Depth(this XElement element) {
+		public static int Depth(this XObject element) {
 			if (element.Parent == null)
 				return 0;
 			return element.Parent.Depth() + 1;
