@@ -12,13 +12,28 @@ namespace SLaks.Rebracer.Services {
 	///<summary>Finds the correct location for solution-specific and user-global Rebracer settings files.</summary>
 	[Export]
 	public class SettingsLocator {
-		readonly string FileName = "Rebracer.xml";
-
 		readonly string userFolder;
+		readonly DTE dte;
+
+		string FileName
+		{
+			get
+			{
+				try {
+					if (dte?.Version == "15.0")
+						return "RebracerV15.0.xml";
+					else
+						return "Rebracer.xml";
+				} catch (Exception) {
+					return "Rebracer.xml";
+				}
+			}
+		}
 
 		[ImportingConstructor]
 		public SettingsLocator(SVsServiceProvider sp) {
 			userFolder = new ShellSettingsManager(sp).GetApplicationDataFolder(ApplicationDataFolder.RoamingSettings);
+			dte = (DTE)sp.GetService(typeof(DTE));
 		}
 
 		///<summary>Gets the path to the user global settings file, to be used in the absence of a solution settings file.</summary>
