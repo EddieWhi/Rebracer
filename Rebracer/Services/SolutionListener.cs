@@ -123,8 +123,9 @@ namespace SLaks.Rebracer.Services {
 			if (File.Exists(expectedPath))
 				persister.ActivateSettingsFile(expectedPath);
 			else
-				MessageBox.Show("The Rebracer settings file that you added is not in the correct location; you are still using global settings.\n"
-							  + "To add a Rebracer settings file, right-click the solution, click Add, New Rebracer Settings File\n"
+				MessageBox.Show("The Rebracer settings file that you added is not within the solution directory. Whilst this"
+							  + "will work, you may get unexpected changes when sharing a single settings file between solutions.\n"
+							  + "To add a Rebracer settings file to the solution, right-click the solution, click Add, New Rebracer Settings File\n"
 							  + "Alternatively, copy an existing settings file to \n  " + expectedPath,
 								"Rebracer", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}

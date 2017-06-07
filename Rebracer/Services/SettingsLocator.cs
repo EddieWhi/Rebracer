@@ -44,11 +44,30 @@ namespace SLaks.Rebracer.Services {
 			return Path.Combine(Path.GetDirectoryName(solution.FileName), FileName);
 		}
 
+		///<summary>Gets the path to a solution-specific settings file, based on the solution items, not just the path.</summary>
+		public string SolutionItemsPath(Solution solution) {
+			try
+			{
+				var solItems = solution.GetSolutionItems();
+				var bracerXml = solItems?.ProjectItems.OfType<ProjectItem>().FirstOrDefault(pi => pi.Name.Equals(FileName, StringComparison.OrdinalIgnoreCase));
+
+				if (bracerXml?.FileCount == 1)
+					return Path.Combine(Path.GetDirectoryName(solution.FileName), bracerXml.FileNames[1]);
+			}
+			catch (Exception)
+			{
+				//Ignore any errors
+				return SolutionPath(solution);
+			}
+
+			return SolutionPath(solution);
+		}
+
 		///<summary>Gets the path to the settings file to use for a specific solution, if any.</summary>
 		public string GetActiveFile(Solution solution) {
 			if (!solution.IsOpen || String.IsNullOrEmpty(solution.FileName))
 				return UserSettingsFile;
-			return new[] { SolutionPath(solution), UserSettingsFile }.FirstOrDefault(File.Exists) ?? UserSettingsFile;
+			return new[] { SolutionPath(solution), SolutionItemsPath(solution), UserSettingsFile }.FirstOrDefault(File.Exists) ?? UserSettingsFile;
 		}
 	}
 }
