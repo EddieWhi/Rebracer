@@ -73,7 +73,7 @@ namespace SLaks.Rebracer.Services {
 			object value;
 			try {
 				value = prop.Value;
-			} catch (COMException ex) {
+			} catch (Exception ex) {	//Who cares what type of exception it is
 				logger.Log((string)("An error occurred while saving " + section + "#" + name + ": " + ex.Message));
 				return null;
 			}
