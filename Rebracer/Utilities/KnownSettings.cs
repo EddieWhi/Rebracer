@@ -52,6 +52,12 @@ namespace SLaks.Rebracer.Utilities {
 				"OnlyUseTaborEnterToCommit"
 			} },
 
+			{ new SettingsSection("TextEditor", "TypeScript Specific"), new [] {
+				// Generic types cannot be marshalled
+				"AvailableTypeScriptVersions"				
+			} },
+			
+
 			{ new SettingsSection("TextEditor", "CSharp-Specific"), new []{ 
 				// Typo'd setting in some VS builds; ignoring to not give warnings for most people.
 				"NewLineQueryExpression_EachClause", 
@@ -71,7 +77,11 @@ namespace SLaks.Rebracer.Utilities {
 				"ShowSnippets", "SmartTagEnabled", "Squiggles", "Squiggles_SemanticAnalysis", "TrackMostRecentlyUsed", 
 				"UnboundItemSmartTagEnabled", "UnboundItem_ExactMatches",
 				"Watson_DeferSendingUntilLater", "Watson_MaxExceptionsToReport", "Watson_ReportExceptions"
-			} }
+			} },
+			{ new SettingsSection("TextEditor", "HTMLX Specific"), new [] {
+				//Add in some updated to VS, which not all people may have
+				"IdentifyHelpfulExtensions"				
+			} },
 		};
 		///<summary>Checks whether a specific property should be skipped to to persistence issues.</summary>
 		public static bool ShouldSkip(SettingsSection section, string property) {
